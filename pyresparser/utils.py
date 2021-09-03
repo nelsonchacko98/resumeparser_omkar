@@ -4,6 +4,7 @@ import io
 import os
 import re
 import nltk
+from nltk import text
 import pandas as pd
 import docx2txt
 from datetime import datetime
@@ -27,42 +28,11 @@ def extract_text_from_pdf(pdf_path):
     :return: iterator of string of extracted text
     '''
     # https://www.blog.pythonlibrary.org/2018/05/03/exporting-data-from-pdfs-with-python/
-    if not isinstance(pdf_path, io.BytesIO):
-        # extract text from local pdf file
-        with open(pdf_path, 'rb') as fh:
-            try:
-                for page in PDFPage.get_pages(
-                        fh,
-                        caching=True,
-                        check_extractable=True
-                ):
-                    resource_manager = PDFResourceManager()
-                    fake_file_handle = io.StringIO()
-                    converter = TextConverter(
-                        resource_manager,
-                        fake_file_handle,
-                        codec='utf-8',
-                        laparams=LAParams()
-                    )
-                    page_interpreter = PDFPageInterpreter(
-                        resource_manager,
-                        converter
-                    )
-                    page_interpreter.process_page(page)
-
-                    text = fake_file_handle.getvalue()
-                    yield text
-
-                    # close open handles
-                    converter.close()
-                    fake_file_handle.close()
-            except PDFSyntaxError:
-                return
-    else:
-        # extract text from remote pdf file
+    # extract text from local pdf file
+    with open(pdf_path, 'rb') as fh:
         try:
             for page in PDFPage.get_pages(
-                    pdf_path,
+                    fh,
                     caching=True,
                     check_extractable=True
             ):
@@ -89,68 +59,24 @@ def extract_text_from_pdf(pdf_path):
         except PDFSyntaxError:
             return
 
-
 def get_number_of_pages(file_name):
     try:
-        if isinstance(file_name, io.BytesIO):
-            # for remote pdf file
+        # for local pdf file
+        if file_name.endswith('.pdf'):
             count = 0
-            for page in PDFPage.get_pages(
-                        file_name,
+            with open(file_name, 'rb') as fh:
+                for page in PDFPage.get_pages(
+                        fh,
                         caching=True,
                         check_extractable=True
-            ):
-                count += 1
+                ):
+                    count += 1
             return count
         else:
-            # for local pdf file
-            if file_name.endswith('.pdf'):
-                count = 0
-                with open(file_name, 'rb') as fh:
-                    for page in PDFPage.get_pages(
-                            fh,
-                            caching=True,
-                            check_extractable=True
-                    ):
-                        count += 1
-                return count
-            else:
-                return None
+            return None
     except PDFSyntaxError:
         return None
 
-
-def extract_text_from_docx(doc_path):
-    '''
-    Helper function to extract plain text from .docx files
-
-    :param doc_path: path to .docx file to be extracted
-    :return: string of extracted text
-    '''
-    try:
-        temp = docx2txt.process(doc_path)
-        text = [line.replace('\t', ' ') for line in temp.split('\n') if line]
-        return ' '.join(text)
-    except KeyError:
-        return ' '
-
-
-def extract_text_from_doc(doc_path):
-    '''
-    Helper function to extract plain text from .doc files
-
-    :param doc_path: path to .doc file to be extracted
-    :return: string of extracted text
-    '''
-    try:
-        try:
-            import textract
-        except ImportError:
-            return ' '
-        text = textract.process(doc_path).decode('utf-8')
-        return text
-    except KeyError:
-        return ' '
 
 
 def extract_text(file_path, extension):
@@ -165,10 +91,8 @@ def extract_text(file_path, extension):
     if extension == '.pdf':
         for page in extract_text_from_pdf(file_path):
             text += ' ' + page
-    elif extension == '.docx':
-        text = extract_text_from_docx(file_path)
-    elif extension == '.doc':
-        text = extract_text_from_doc(file_path)
+    else :
+        print("incompatible file type")
     return text
 
 
@@ -505,18 +429,153 @@ def get_data(text) :
         return
 
 def main() :
-    path = r"pyresparser\resumes\OmkarResume.pdf"
-    abs_path = r"C:\Users\nelson.c\dev\omkar_resume_parser\pyresparser\resumes\OmkarResume.pdf"
     
-    text_gen = extract_text_from_pdf(abs_path)
-    text = []
+    text = """ 
 
-    while(True) :
-        try :
-            text.append(next(text_gen))
-        except StopIteration :
-            break
-    print(len(text))
+NELSON CHACKO 
+
++91 - 8281805497 
+
+nchacko.official@gmail.com· linkedin.com/in/nelsonchacko 
+
+An enthusiastic recent graduate who loves to read books, play football and learn all things computer. 
+
+EXPERIENCE 
+
+APRIL 2020 - MAY 2020 
+PRICESENZ, INTERNSHIP 
+Created a mini service on AWS cloud to automatically parse resumes that are put on a google 
+drive. 
+
+MAY 2018 
+GOOGLE CROWDSOURCE, WORKSHOP 
+Attended Firebase Workshop organized by Google Crowdsource community and successfully 
+implemented a Firebase database. 
+ 
+JULY 2017 
+NEST CYBER CAMPUS, INTERNSHIP 
+Learnt about Basic Web Concepts, HTML, CSS, JavaScript, PHP and My-SQL during my one week 
+time there. 
+ 
+13 OCTOBER 2018 
+ALL INDIA RESEARCH CHAMPIONSHIP, COORDINATOR 
+Conducted a workshop on Ethical Hacking in association with TechiNest. 
+ 
+JANURAY 2018 
+TEDXMACE, VOLUNTEER 
+Volunteered for the Tedx event conducted at our college, had a month-long preparation setting 
+the stage, scheduling the guests and selling tickets. 
+ 
+OCTOBER 2017 
+CODAGE, PARTCIPANT 
+Participated in the coding event CODAGE that was held as part of our National Level Tech-Fest 
+Takshak’17 
+ 
+
+EDUCATION 
+
+2016 - 2020 
+B.TECH COMPUTER SCIENCE, MA COLLEGE OF ENGINEERING 
+7.36 ( CGPA ) 
+
+2014 - 2016 
+SENIOR SECONDARY, VIJAYAGIRI PUBLIC SCHOOL 
+CBSE – 94.4 % 
+ 
+2014 
+SECONDARY, ST’ DOMINIC’S CONVENT ENGLISH MEDIUM SCHOOL 
+CBSE – 10.0 ( CGPA )  
+
+SKILLS 
+
+  Algorithms 
+  Python 
+  C++ 
+  Data-Structures 
+  HTML 
+  CSS 
+ 
+
+Java Script 
+
+ACTIVITIES 
+
+  Leader 
+  Problem Solver 
+  Team worker 
+  Quick Learner 
+ 
+
+  Runners up at KTU Zonal Football competition representing my college 
+  Runners up at 3-s Football tournament at Ilahia College of Engineering 
+  Active Quiz club member 
+
+PROJECTS 
+
+  Main Project - Decentralized Car Rental Platform using Block Chain technology 
+
+o  Learnt about live block chain simulator Ganache 
+o  Learnt about solidity programming language 
+o  Learnt Truffle Framework to integrate block chain with HTML code 
+o  Used firebase to export live data from model car to the Block chain network 
+
+ 
+
+  Mini Project – PDF analyzer 
+
+o  Created a pdf analyzing software that is able to parse through KTU results and 
+
+report the data found. 
+
+o  Achieved this using PHP and Maria DB Database 
+o  Used Xamp to create the local server. 
+
+PAPER PRESENTATION 
+
+EtherRent : A Co-operative Car Rental Platform 
+ 
+ 
+
+URL: https://www.irjet.net/archives/V7/i4/IRJET-V7I4343.pdf 
+DATE PUBLISHED: APRIL 2020 
+
+2 
+
+"""
+ 
+    text = text.encode('utf-8').decode('ascii','ignore')
+    dict = extract_entity_sections_grad(text)
+
+    from pprint import pprint    
+    pprint(dict)
+    
+    return
+        
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    # path = r"pyresparser\resumes\OmkarResume.pdf"
+    # abs_path = r"C:\Users\nelson.c\dev\omkar_resume_parser\pyresparser\resumes\OmkarResume.pdf"
+    
+    # text_gen = extract_text_from_pdf(abs_path)
+    # text = []
+
+    # while(True) :
+    #     try :
+    #         text.append(next(text_gen))
+    #     except StopIteration :
+    #         break
+    # print(len(text))
     
     # data = []
     # data.append(get_data(text))
