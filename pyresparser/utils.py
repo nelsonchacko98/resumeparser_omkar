@@ -8,7 +8,7 @@ import pandas as pd
 import docx2txt
 from datetime import datetime
 from dateutil import relativedelta
-from . import constants as cs
+import constants as cs
 from pdfminer.converter import TextConverter
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfinterp import PDFResourceManager
@@ -494,3 +494,37 @@ def extract_experience(resume_text):
         if x and 'experience' in x.lower()
     ]
     return x
+
+
+def get_data(text) : 
+    try:
+        data = next(text)
+        if data is not None:
+            return
+    except StopIteration:
+        return
+
+def main() :
+    path = r"pyresparser\resumes\OmkarResume.pdf"
+    abs_path = r"C:\Users\nelson.c\dev\omkar_resume_parser\pyresparser\resumes\OmkarResume.pdf"
+    
+    text_gen = extract_text_from_pdf(abs_path)
+    text = []
+
+    while(True) :
+        try :
+            text.append(next(text_gen))
+        except StopIteration :
+            break
+    print(len(text))
+    
+    # data = []
+    # data.append(get_data(text))
+    
+    # print(data)
+    
+    
+
+if __name__ == "__main__" :
+    main()
+    exit()

@@ -1,5 +1,5 @@
-from . import utils
-from . import constants
+import utils
+import constants
 from .resume_parser import ResumeParser
 
 __all__ = [
