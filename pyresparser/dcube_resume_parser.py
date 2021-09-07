@@ -7,6 +7,7 @@ from pprint import pprint
 import glob
 import json
 import os
+from tqdm import tqdm
 
 class ResumeParser(object):
 
@@ -29,7 +30,10 @@ class ResumeParser(object):
         }
         self.__resume = resume
         ext = self.__resume.split('.')[-1]
-        self.__text_raw = utils.extract_text(self.__resume, '.' + ext)
+        try : 
+            self.__text_raw = utils.extract_text(self.__resume, '.' + ext)
+        except Exception as e :
+            print(f"{self.__resume} has a problem {e}")
         self.__text = ' '.join(self.__text_raw.split())
         self.__lines = utils.get_lines_from_text(self.__text_raw)
         self.__nlp = nlp(self.__text)
@@ -74,13 +78,13 @@ def main() :
     files = list(set(pdf_files))
     print (f"{len(files)} files identified")
 
-    for f in files:
+    for f in tqdm(files):
         print("Reading File %s"%f)
         obj = ResumeParser(f)
         details = obj.get_extracted_data()
         fileName = f.split('\\')[-1]
-        print(fileName)
-        pprint(json.dumps(details))
+        # print(fileName)
+        # pprint(json.dumps(details))
         # "C:\Users\nelson.c\dev\omkar_resume_parser\json_out\Resume_Nelson.pdf.json"
         fOut = open(f"json_out\\output.json", 'a')
         fOut.write(json.dumps(details))

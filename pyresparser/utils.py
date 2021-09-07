@@ -514,8 +514,8 @@ def export_to_json(file_name) :
 
 
 def main() :
-    resume_path = r"C:\Users\nelson.c\dev\omkar_resume_parser\pyresparser\resumes\Resume_Nelson.pdf"
-    print(extract_text_from_pdf(resume_path))
+    resume_path = r"C:\Users\nelson.c\dev\Cluttered\Resumes_failed\bini_resume-1.PDF"
+    print(convertPDFToText(resume_path))
     return
         
         
