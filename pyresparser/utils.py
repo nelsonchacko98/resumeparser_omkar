@@ -18,7 +18,28 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfparser import PDFSyntaxError
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
+from io import StringIO
 
+
+
+def convertPDFToText(path):
+    rsrcmgr = PDFResourceManager()
+    retstr = StringIO()
+    laparams = LAParams()
+    device = TextConverter(rsrcmgr, retstr, laparams=laparams)
+    fp = open(path, 'rb')
+    interpreter = PDFPageInterpreter(rsrcmgr, device)
+    password = ""
+    maxpages = 0
+    caching = True
+    pagenos=set()
+    for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,caching=caching, check_extractable=True):
+        interpreter.process_page(page)
+    fp.close()
+    device.close()
+    string = retstr.getvalue()
+    retstr.close()
+    return string
 
 def extract_text_from_pdf(pdf_path):
     '''
@@ -93,7 +114,7 @@ def extract_text(file_path, extension):
             text += ' ' + page
     else :
         print("incompatible file type")
-    return text
+    return text.encode("utf-8").decode("ascii","ignore")
 
 
 def extract_entity_sections_grad(text):
@@ -257,6 +278,66 @@ def extract_email(text):
         except IndexError:
             return None
 
+def get_lines_from_text(text) :
+        lines = [el.strip() for el in text.split("\n") if len(el) > 0]  # Splitting on the basis of newlines 
+        lines = [nltk.word_tokenize(el) for el in lines]    # Tokenize the individual lines
+        lines = [nltk.pos_tag(el) for el in lines]  # Tag them
+        return lines
+
+
+def extract_name_regex(lines) :
+    '''
+    Given an input string, returns possible matches for names. Uses regular expression based matching.
+    Needs an input string, a dictionary where values are being stored, and an optional parameter for debugging.
+    Modules required: clock from time, code.
+    '''
+
+    # Reads Indian Names from the file, reduce all to lower case for easy comparision [Name lists]
+    indianNames = open(
+            os.path.join(os.path.dirname(__file__), 'allNames.txt')
+        ).read()
+    # indianNames = open("allNames.txt", "r").read().lower()
+    # Lookup in a set is much faster
+    indianNames = set(indianNames.split())
+    
+
+    otherNameHits = []
+    nameHits = []
+    name = None
+
+    # Try a regex chunk parser
+    # grammar = r'NAME: {<NN.*><NN.*>|<NN.*><NN.*><NN.*>}'
+    grammar = r'NAME: {<NN.*><NN.*><NN.*>*}'
+    # Noun phrase chunk is made out of two or three tags of type NN. (ie NN, NNP etc.) - typical of a name. {2,3} won't work, hence the syntax
+    # Note the correction to the rule. Change has been made later.
+    chunkParser = nltk.RegexpParser(grammar)
+    all_chunked_tokens = []
+    for tagged_tokens in lines:
+        # Creates a parse tree
+        if len(tagged_tokens) == 0: continue # Prevent it from printing warnings
+        chunked_tokens = chunkParser.parse(tagged_tokens)
+        all_chunked_tokens.append(chunked_tokens)
+        for subtree in chunked_tokens.subtrees():
+            #  or subtree.label() == 'S' include in if condition if required
+            if subtree.label() == 'NAME':
+                for ind, leaf in enumerate(subtree.leaves()):
+                    if leaf[0].lower() in indianNames and 'NN' in leaf[1]:
+                        # Case insensitive matching, as indianNames have names in lowercase
+                        # Take only noun-tagged tokens
+                        # Surname is not in the name list, hence if match is achieved add all noun-type tokens
+                        # Pick upto 3 noun entities
+                        hit = " ".join([el[0] for el in subtree.leaves()[ind:ind+3]])
+                        # Check for the presence of commas, colons, digits - usually markers of non-named entities 
+                        if re.compile(r'[\d,:]').search(hit): continue
+                        nameHits.append(hit)
+                        # Need to iterate through rest of the leaves because of possible mis-matches
+    # Going for the first name hit
+    if len(nameHits) > 0:
+        nameHits = [re.sub(r'[^a-zA-Z \-]', '', el).strip() for el in nameHits] 
+        name = " ".join([el[0].upper()+el[1:].lower() for el in nameHits[0].split() if len(el)>0])
+        otherNameHits = nameHits[1:]
+
+    return name , otherNameHits
 
 def extract_name(nlp_text, matcher):
     '''
@@ -428,161 +509,18 @@ def get_data(text) :
     except StopIteration:
         return
 
+def export_to_json(file_name) :
+    pass
+
+
 def main() :
-    
-    text = """ 
-
-NELSON CHACKO 
-
-+91 - 8281805497 
-
-nchacko.official@gmail.com· linkedin.com/in/nelsonchacko 
-
-An enthusiastic recent graduate who loves to read books, play football and learn all things computer. 
-
-EXPERIENCE 
-
-APRIL 2020 - MAY 2020 
-PRICESENZ, INTERNSHIP 
-Created a mini service on AWS cloud to automatically parse resumes that are put on a google 
-drive. 
-
-MAY 2018 
-GOOGLE CROWDSOURCE, WORKSHOP 
-Attended Firebase Workshop organized by Google Crowdsource community and successfully 
-implemented a Firebase database. 
- 
-JULY 2017 
-NEST CYBER CAMPUS, INTERNSHIP 
-Learnt about Basic Web Concepts, HTML, CSS, JavaScript, PHP and My-SQL during my one week 
-time there. 
- 
-13 OCTOBER 2018 
-ALL INDIA RESEARCH CHAMPIONSHIP, COORDINATOR 
-Conducted a workshop on Ethical Hacking in association with TechiNest. 
- 
-JANURAY 2018 
-TEDXMACE, VOLUNTEER 
-Volunteered for the Tedx event conducted at our college, had a month-long preparation setting 
-the stage, scheduling the guests and selling tickets. 
- 
-OCTOBER 2017 
-CODAGE, PARTCIPANT 
-Participated in the coding event CODAGE that was held as part of our National Level Tech-Fest 
-Takshak’17 
- 
-
-EDUCATION 
-
-2016 - 2020 
-B.TECH COMPUTER SCIENCE, MA COLLEGE OF ENGINEERING 
-7.36 ( CGPA ) 
-
-2014 - 2016 
-SENIOR SECONDARY, VIJAYAGIRI PUBLIC SCHOOL 
-CBSE – 94.4 % 
- 
-2014 
-SECONDARY, ST’ DOMINIC’S CONVENT ENGLISH MEDIUM SCHOOL 
-CBSE – 10.0 ( CGPA )  
-
-SKILLS 
-
-  Algorithms 
-  Python 
-  C++ 
-  Data-Structures 
-  HTML 
-  CSS 
- 
-
-Java Script 
-
-ACTIVITIES 
-
-  Leader 
-  Problem Solver 
-  Team worker 
-  Quick Learner 
- 
-
-  Runners up at KTU Zonal Football competition representing my college 
-  Runners up at 3-s Football tournament at Ilahia College of Engineering 
-  Active Quiz club member 
-
-PROJECTS 
-
-  Main Project - Decentralized Car Rental Platform using Block Chain technology 
-
-o  Learnt about live block chain simulator Ganache 
-o  Learnt about solidity programming language 
-o  Learnt Truffle Framework to integrate block chain with HTML code 
-o  Used firebase to export live data from model car to the Block chain network 
-
- 
-
-  Mini Project – PDF analyzer 
-
-o  Created a pdf analyzing software that is able to parse through KTU results and 
-
-report the data found. 
-
-o  Achieved this using PHP and Maria DB Database 
-o  Used Xamp to create the local server. 
-
-PAPER PRESENTATION 
-
-EtherRent : A Co-operative Car Rental Platform 
- 
- 
-
-URL: https://www.irjet.net/archives/V7/i4/IRJET-V7I4343.pdf 
-DATE PUBLISHED: APRIL 2020 
-
-2 
-
-"""
- 
-    text = text.encode('utf-8').decode('ascii','ignore')
-    dict = extract_entity_sections_grad(text)
-
-    from pprint import pprint    
-    pprint(dict)
-    
+    resume_path = r"C:\Users\nelson.c\dev\omkar_resume_parser\pyresparser\resumes\Resume_Nelson.pdf"
+    print(extract_text_from_pdf(resume_path))
     return
         
         
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    # path = r"pyresparser\resumes\OmkarResume.pdf"
-    # abs_path = r"C:\Users\nelson.c\dev\omkar_resume_parser\pyresparser\resumes\OmkarResume.pdf"
-    
-    # text_gen = extract_text_from_pdf(abs_path)
-    # text = []
+  
 
-    # while(True) :
-    #     try :
-    #         text.append(next(text_gen))
-    #     except StopIteration :
-    #         break
-    # print(len(text))
-    
-    # data = []
-    # data.append(get_data(text))
-    
-    # print(data)
-    
-    
 
 if __name__ == "__main__" :
     main()
