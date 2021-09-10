@@ -27,6 +27,7 @@ class ResumeParser(object):
             'mobile_number': None,
             'skills': None,
             'no_of_pages': None,
+            'file_name' : None
         }
         self.__resume = resume
         ext = self.__resume.split('.')[-1]
@@ -66,6 +67,7 @@ class ResumeParser(object):
         self.__details['no_of_pages'] = utils.get_number_of_pages(
                                             self.__resume
                                         )
+        self.__details['file_name'] = self.__resume
         self.__details['other name hits '] = otherHits        
         return
     
@@ -76,9 +78,10 @@ def main() :
     pdf_files = glob.glob("resumes/*.pdf")
 
     files = list(set(pdf_files))
+    files.sort()
     print (f"{len(files)} files identified")
 
-    for f in tqdm(files):
+    for f in tqdm(files[:20]):
         print("Reading File %s"%f)
         obj = ResumeParser(f)
         details = obj.get_extracted_data()
@@ -87,7 +90,7 @@ def main() :
         # pprint(json.dumps(details))
         # "C:\Users\nelson.c\dev\omkar_resume_parser\json_out\Resume_Nelson.pdf.json"
         fOut = open(f"json_out\\output.json", 'a')
-        fOut.write(json.dumps(details))
+        fOut.write(json.dumps(details,indent=4))
         fOut.close()
 
     return

@@ -1,0 +1,221 @@
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+A.Nitheesh 
+
+Kozhippat House, 
+Mundakkal, 
+Kollam-691001, 
+(+91)8089987706 
+albynith@gmail.com 
+
+I look forward to a work driven environment where I could 
+utilize my potential and apply my knowledge to the 
+fullest. 
+
+2017-2019 University Institute of Technology, MSc Computer Science (CS) 
+
+2014-2017 University Institute of Technology, Bachelor of Computer Application (BCA). 
+
+Education 
+
+Projects 
+
+1.  Project Name 
+Company 
+
+:  OTRAMS 
+: Qtech Software Pvt. Ltd, Atlanta Centre, 402, Sonawala Rd, Goregaon, 
+
+Mumbai-400063. 
+
+jQuery, Core PHP. 
+
+Technology Used     : PHP 7.3, Mongo dB, My SQL, Smarty, Angular, Html, CSS, JavaScript, 
+
+Description 
+
+:  OTRAMS  is  comprehensive.  Manage  bookings,  operations,  agent 
+settings, offline services, destination management, MICE requests and 
+reporting;  all  from  a  single  console.  Using    more  than  40  suppliers  
+apis , integrating, fetching the data and making it in a readable format 
+which is then provided to the client users for making bookings . 
+
+Duration 
+
+:  1 Year. 
+
+2.  Project Name 
+Company 
+Technology Used      : PHP 7.1, Mongo dB, Angular, Html, CSS, JavaScript, MVC. 
+Description 
+
+:  Fundtech 
+: Markets mojo, Kurla, Mumbai. 
+
+:  This  Project  focuses  on  creating  advices  based  on    different  
+Algorithms  for  the  stock  market  investors  for  what  stock  to  buy  and 
+sell  to  have  a  gain  in  their  portfolio.  Also  provided  with  api  to  the 
+clients about the financial data of all the stocks daily. 
+
+Duration 
+
+: 1 Year 
+
+Technical Projects (Academics) 
+
+1.  Project Name 
+
+Technology Used 
+Description 
+
+: Nirbhaya 
+: PHP 7.1, SQL , Html, Css , Javascript ,Java . 
+: This Project Focuses on creating a website and an android application 
+
+Duration 
+
+: 1 Year 
+
+which helps to increase womens security 
+
+2.  Project Name 
+
+Technology Used 
+Description 
+
+: Broadcast Chatting 
+: Java, JDK, Servlet ,Applet. 
+: This Project Focuses on creating a chatting application within a 
+
+Duration 
+
+: 1 Year 
+
+suitable java environment. 
+
+Coursework 
+
+ HTML 
+
+ Angular 
+
+ Java Script 
+
+ CSS 
+
+ PHP 
+
+ Mongodb 
+
+ MVC Framework 
+
+ Smarty 
+
+Company 
+
+: - Qtech Software Pvt. Ltd 
+
+Designation 
+
+: - Software Developer ( PHP Developer) 
+
+Company 
+
+: - Markets mojo 
+
+Designation 
+
+: - Jn. Software Developer ( PHP Developer) 
+
+ SQL 
+
+ JQuery 
+
+ Core PHP 
+
+Work Experience 
+  Mar 2020  Till Today 
+
+  Jan 2019  Mar 2020 
+
+Languages 
+
+English 
+
+Malayalam 
+
+Tamil 
+
+Hindi 
+
+Fluent 
+
+Fluent 
+
+Fluent 
+
+Beginner 
+
+Interests 
+
+- Web, App Designing 
+
+- Video Editing 
+
+Personal Details 
+
+Name 
+Date of Birth 
+Correspondence Address 
+
+Permanent Address 
+
+Contact Number 
+
+Declaration 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+- Football 
+
+- Riding 
+
+: A  Nitheesh 
+: 25/12/1996 
+: Kozhippat House Mundakkal, 
+
+Kollam  691001. 
+
+: Kozhippat House Mundakkal, 
+
+Kollam - 691001. 
+: +91 8089987706 
+
+I hereby declare that the information given above is true and correct to the 
+best of my Knowledge 
+
+

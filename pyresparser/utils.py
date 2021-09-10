@@ -294,7 +294,7 @@ def extract_name_regex(lines) :
 
     # Reads Indian Names from the file, reduce all to lower case for easy comparision [Name lists]
     indianNames = open(
-            os.path.join(os.path.dirname(__file__), 'allNames.txt')
+            os.path.join(os.path.dirname(__file__), 'otherNames.txt')
         ).read()
     # indianNames = open("allNames.txt", "r").read().lower()
     # Lookup in a set is much faster
@@ -307,7 +307,8 @@ def extract_name_regex(lines) :
 
     # Try a regex chunk parser
     # grammar = r'NAME: {<NN.*><NN.*>|<NN.*><NN.*><NN.*>}'
-    grammar = r'NAME: {<NN.*><NN.*><NN.*>*}'
+    grammar = r'NAME : {<NN.*><NN.*>+}'
+    # grammar = r'NAME: {<NN.*><NN.*><NN.*>*}'
     # Noun phrase chunk is made out of two or three tags of type NN. (ie NN, NNP etc.) - typical of a name. {2,3} won't work, hence the syntax
     # Note the correction to the rule. Change has been made later.
     chunkParser = nltk.RegexpParser(grammar)
@@ -514,8 +515,19 @@ def export_to_json(file_name) :
 
 
 def main() :
-    resume_path = r"C:\Users\nelson.c\dev\Cluttered\Resumes_failed\bini_resume-1.PDF"
-    print(convertPDFToText(resume_path))
+    resume_path = r"C:\Users\nelson.c\dev\omkar_resume_parser\pyresparser\resumes\A_Nitheesh.pdf"
+    # print(convertPDFToText(resume_path))
+    text = convertPDFToText(resume_path)
+    text = text.encode('utf-8').decode('ascii','ignore')
+    with open("nitheesh.txt","w") as f :
+        f.write(text)
+    
+    # text = convertPDFToText(resume_path)
+    # text = text.encode("utf-8").decode("ascii","ignore")
+    # lines = get_lines_from_text(text)
+    # name , otherHits = extract_name_regex(lines)
+    # print(name,otherHits)
+    
     return
         
         
